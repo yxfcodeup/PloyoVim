@@ -20,13 +20,7 @@ set helplang=cn     "设置中文帮助文档，若需要英文则改为helplang
 "Ctrl+m                     打开taglist窗口
 "Ctrl+b                     tagbar
 "Ctrl+l                     IndentLine
-"Ctrl+Shift+- 然后按s       查找本 C 符号(可以跳过注释)
-"Ctrl+Shift+- 然后按g       查找本定义                      
-"Ctrl+Shift+- 然后按d       查找本函数调用的函数
-"Ctrl+Shift+- 然后按c       查找调用本函数的函数
-"Ctrl+Shift+- 然后按e       查找本 egrep 模式
-"Ctrl+Shift+- 然后按f       查找本文件
-"Ctrl+Shift+- 然后按i       查找包含本文件的文件
+"Ctrl+e                     phpcs error window toggle
 
 "---------------------------------键映射---------------------------------------
 "Command    Normal      Visual      Operator Pending    Inder Only  Command Line
@@ -76,8 +70,10 @@ colorscheme default "设置配色方案
 "colorscheme github
 "colorscheme ron
 "colorscheme desert
-"set cul            "高亮光标所在行
-"set cuc            "高亮光标所在列
+"set cursorcolumn   "高亮光标所在列
+"highlight CursorColumn cterm=NONE ctermbg=darkblue ctermfg=green guibg=NONE guifg=NONE
+"set cursorline     "高亮光标所在行
+"highlight CursorLine   cterm=NONE ctermbg=NONE ctermfg=green guibg=NONE guifg=NONE
 "set scrolloff=5    "光标上下两侧最少保留的屏幕行数。这使你工作时总有一些可见的上下文。
 set showmatch       "设置匹配模式，显示匹配的括号
 "set hidden          "允许在有未保存的修改时切换缓冲区，此时的修改由 vim 负责保存
@@ -279,10 +275,12 @@ autocmd BufReadPost *
 "******************************************************************************
 "---------------------------------------ctags----------------------------------
 "按下Ctrl+n重新生成tag文件，并更新taglist
-map <silent> <C-N> :!ctags -R -f .tags --c-kinds=+cdfmsqtuv --c++-kinds=+cdfmnstuv --java-kinds=+cfimp --php-kinds=+cidfvj --python-kinds=+cfmvi --vim-kinds=+acfmv --fields=+ialS --extra=+q .<CR><CR> :TlistUpdate<CR>
+"map <silent> <C-N> :!ctags -R -f .tags --c-kinds=+cdfmsqtuv --c++-kinds=+cdfmnstuv --java-kinds=+cfimp --php-kinds=+cidfvj --python-kinds=+cfmvi --vim-kinds=+acfmv --fields=+ialS --extra=+q .<CR><CR> :TlistUpdate<CR>       "生成相对路径的tags
+map <silent> <C-N> :!ctags -R -f .tags --c-kinds=+cdfmsqtuv --c++-kinds=+cdfmnstuv --java-kinds=+cfimp --php-kinds=+cidfvj --python-kinds=+cfmvi --vim-kinds=+acfmv --fields=+ialS --extra=+q `pwd`<CR><CR> :TlistUpdate<CR>       "生成绝对路径的tags
 "map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 "imap <F5> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 set tags=./.tags;,.tags       "不可省略，表示若当前目录中不存在tags，则在父目录中寻找。分号，代表 “向上搜索”，会首先在你当前文件所在的文件夹（不是当前文件夹）里面搜索名为 tags的文件，没有的话，往上一级目录，再没有的话，再往上一级目录，直到搜索到根目录为止
+set tags+=~/.vim/GlobalTags/*.tags
 "set tags+=~/.vim/tags/.tags
 "set tags+=./.tags    "add current directory's generated tags file
 "set tags+=~/arm/linux-2.6.24.7/tags "add new tags file(刚刚生成tags的路径，在ctags -R 生成tags文件后，不要将tags移动到别的目录，否则ctrl+］时，会提示找不到源码文件)
@@ -397,15 +395,45 @@ Plugin 'VundleVim/Vundle.vim'
 "----------------------------------------------------------------->>> syntastic
 "syantastic是一款强大的语法检查插件，支持很多语言的语法与编码风格检查。实际上这个插件只是个接口，背后的语法检查是交给各个语言自己的检查器
 Plugin 'vim-syntastic/syntastic'
+map <C-E> :call ToggleErrors()<CR>
+"map <C-0> :SyntasticToggleMode<CR>         "在激活/禁用间切换
+"map <C-9> :lclose<CR>                      "关闭提示窗口
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list=1
+let g:syntastic_always_populate_loc_list=1  "每次自动调用 :SyntasticSetLocList, 将错误覆盖 **quickfix**
+let g:syntastic_auto_loc_list=1             "自动拉起/关闭错误窗口, 不需要手动调用 :Errors。0不自动. 1自动拉起关闭. 2 自动关闭，但不自动拉起. 3 自动拉起，但不自动关闭 默认2, 改为1
+let g:syntastic_loc_list_height=5           "错误提示窗口高度
 let g:syntastic_check_on_open=1             "设置为每次打开buffer就执行语法检查，而不只是在保存时
-let g:syntastic_check_on_wq=0
+let g:syntastic_check_on_wq=0               "设置保存关闭文件时不执行语法检查
+let g:syntastic_echo_current_error=1        "在命令行显示当前行的错误信息. 默认1
+let g:syntastic_enable_sign=1               "做行号左边显示错误标记. 默认1
+"配置error-sign
+let g:syntastic_error_symbol='=>'
+let g:syntastic_style_error_symbol='??'
+let g:syntastic_warning_symbol='->'
+let g:syntastic_style_warning_symbol='?'
+"配置各语言的checker
 let g:syntastic_python_checkers=['pylint']  "python语法检查器
 let g:syntastic_python_pylint_args='--disable=C,R,W'    "忽略convention(C),refactor()R,warning(W),只报error(E)与致命错误(F)
+let g:syntastic_php_checkers=['php']
+let g:syntastic_php_phpcs_args='--standard=zend -n --report=csv'
+func! ToggleErrors()
+    if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
+        "No location/quickfix list shown, open syntastic error location panel
+        Errors
+    else 
+        lclose
+    endif
+endfunc
+func! ToggleErrors1()
+    let old_last_winnr=winnr('$')
+    lclose
+    if old_last_winnr == winnr('$')
+        "Nothing was closed, open syntastic error location panel
+        Errors
+    endif
+endfunc
 
 "------------------------------------------------------------->>> YouCompleteMe
 "Plugin 'Valloric/YouCompleteMe'
@@ -484,6 +512,7 @@ Plugin 'quickfix/quickfix'
 Plugin 'majutsushi/tagbar'
 map <C-B> :TagbarToggle<CR>
 let g:tagbar_ctags_bin='ctags'
+let g:tagbar_autofocus=1        "设置为打开tagbar自动切换
 "let g:tagbar_width=30
 
 "------------------------------------------------------------->>> Indent Guides
@@ -494,7 +523,7 @@ let g:tagbar_ctags_bin='ctags'
 Plugin 'Yggdroot/indentLine'
 map <C-L> :IndentLinesToggle<CR>
 let g:indentLine_char='|'
-let g:indentLine_enabled=1
+let g:indentLine_enabled=0
 "let g:indentLine_setColors=0
 "let g:indentLine_color_term=239
 
@@ -508,6 +537,12 @@ let g:indentLine_enabled=1
 
 "--------------------------------------------------------------->>> vim-airline
 "Plugin 'vim-airline/vim-airline'
+
+"---------------------------------------------------->>> ShowTrailingWhitespace
+"显示行尾空格
+Plugin 'vim-scripts/ShowTrailingWhitespace'
+map <silent> <C-Z> :call ShowTrailingWhitespace#Toggle(0)<CR>
+let g:ShowTrailingWhitespace=0
 
 
 " All of your Plugins must be added before the following line
