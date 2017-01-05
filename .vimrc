@@ -1,25 +1,25 @@
 set nocompatible    "去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
+set cmdheight=1     "命令行（在状态行下）的高度，设置为1 
 set helplang=cn     "设置中文帮助文档，若需要英文则改为helplang=en
 "set langmenu=zh_CN.UTF-8
 "******************************************************************************
 "---------------------------------快捷设置-------------------------------------
 "F1                         vim help
-"F2                         自动补全的代码
-"F3                         根据头文件补全代码
-"F4                         grep
-"F5                         make
-"F6                         make clean
-"F7                         gdb（单个文件编译及调试
-"F8                         更新ctags数据库
-"F9                         编译
-"Ctr+F9                     运行
+"F2                         
+"F3                         
+"F4                         
+"F5                         Quickly Run
+"F6                         
+"F7                         
+"F8                         
+"F9                         
+"Ctr+F9                     
 "F10
-"F12                        切换.c和.h文件
-"Tag                        C-X C-O 补全
-"wm                         WinManager
-"cscope检索
+"F12                        
 "Ctrl+n                     ctags生成.tags文件
 "Ctrl+m                     打开taglist窗口
+"Ctrl+b                     tagbar
+"Ctrl+l                     IndentLine
 "Ctrl+Shift+- 然后按s       查找本 C 符号(可以跳过注释)
 "Ctrl+Shift+- 然后按g       查找本定义                      
 "Ctrl+Shift+- 然后按d       查找本函数调用的函数
@@ -180,7 +180,7 @@ set ruler           "标尺，用于显示光标位置的行号和列号，逗�
 "------------------------------------折叠设置----------------------------------
 
 "----------------------------------换行与折行----------------------------------
-set textwidth=0             "设置自动换行,0为不自动换行
+"set textwidth=0             "设置自动换行,0为不自动换行
 set wrap                    "设置自动折行
 "set nowrap                 "设置不自动折行
 
@@ -213,6 +213,38 @@ set wrap                    "设置自动折行
 "    let &makeprg = mp
 "    let &errorformat = ef
 "endfunction
+
+
+
+"******************************************************************************
+"-------------------------------------Quickly Run------------------------------
+map <F5> :call CompileRun()<CR>
+func! CompileRun()
+    exec "w"
+    if &filetype == 'c'
+        exec "!g++ % -o %<"
+        exec "!time ./%<"
+    elseif &filetype == 'cpp'
+        exec "!g++ $ -o $<"
+        exec "!time ./%<"
+    elseif &filetype == 'java'
+        exec "!javac %"
+        exec "!time java %<"
+    elseif &filetype == 'sh'
+        :!time bash %
+    elseif &filetype == 'python'
+        exec "!time python %"
+    elseif &filetype == 'html'
+        exec "!firefox % &"
+    elseif &filetype == 'go'
+        exec "!go build %<"
+        exec "!time go run %"
+    elseif &filetype == 'mkd'
+        exec "!~/.vim/markdown.pl % > %.html"
+        exec "!firefox %.html $"
+    endif
+endfunc
+
 
 
 
@@ -324,44 +356,61 @@ nmap <silent> <C-M> :TlistToggle<CR>
 ":BundleClean!              -清除列表中没有的插件
 
 "filetype的默认属性：detection:ON plugin:OFF indent:OFF
-filetype off                    "required!关闭自动检测文件类型!从这行开始，vimrc配置
-set rtp+=~/.vim/bundle/vundle/  "rpt:runtimepath
-call vundle#rc()                "另一种选择, 指定一个vundle安装插件的路径 call vundle#begin('~/some/path/here')
+filetype off                        "required!关闭自动检测文件类型!从这行开始，vimrc配置
+set rtp+=~/.vim/bundle/Vundle.vim   "rpt:runtimepath
+call vundle#begin()                 "另一种选择, 指定一个vundle安装插件的路径 call vundle#begin('~/some/path/here')
 
 "let Vundle manage Vundle
 "required! 
-Bundle 'gmarik/vundle'
+Plugin 'VundleVim/Vundle.vim'
 
-"My Bundles here:  /* 插件配置格式 */
+"My Bundles here:  /* 插件配置格式说明 */
 "------------------------------------------------------------------------------
-"original repos on github （github网站上非vim-scripts仓库的插件，使用“用户名/插件名称”的方式指定）
-"bundle 'tpope/vim-fugitive'
-"bundle 'lokaltog/vim-easymotion'
-"bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-"bundle 'tpope/vim-rails.git'
+"plugin on GitHub repo
+"(github网站上非vim-scripts仓库的插件，使用“用户名/插件名称”的方式指定)
+"Plugin 'tpope/vim-fugitive'
 "------------------------------------------------------------------------------
-"vim-scripts repos（vim-scripts仓库里的，直接指定插件名称即可，插件明中的空格使用“-”代替）
-"bundle 'l9'
-"bundle 'FuzzyFinder'
+"plugin from http://vim-scripts.org/vim/scripts.html
+"(vim-scripts仓库里的，直接指定插件名称即可，插件明中的空格使用“-”代替)
+"Plugin 'L9'
 "------------------------------------------------------------------------------
-"non github repos   (指定非Github的Git仓库的插件，需要使用git地址 )
-"bundle 'git://git.wincent.com/command-t.git'
+"Git plugin not hosted on GitHub
+"(指定非Github的Git仓库的插件，需要使用git地址)
+"Plugin 'git://git.wincent.com/command-t.git'
 "------------------------------------------------------------------------------
 "(指定本地Git仓库中的插件)
-"Bundle 'file:///Users/gmarik/path/to/plugin'
-" ...
+"git repos on your local machine (i.e. when working on your own plugin)
+"Plugin 'file:///home/gmarik/path/to/plugin'
+"------------------------------------------------------------------------------
+"The sparkup vim script is in a subdirectory of this repo called vim.
+"Pass the path to set the runtimepath properly.
+"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+"------------------------------------------------------------------------------
+"Install L9 and avoid a Naming conflict if you've already installed a
+"different version somewhere else.
+"Plugin 'ascenator/L9', {'name': 'newL9'}
 
 "-------------------------------------------------------------------->>> Xdebug
-"Bundle 'xdebug/xdebug'
+"Plugin 'xdebug/xdebug'
 "let g:debuggerPort=9090     "注意：要与/etc/php.d/xdebug.ini中xdebug.remote_port端口配置一致
 
-"------------------------------------------------------------->>> Indent Guides
-"bundle 'https://github.com/nathanaelkane/vim-indent-guides.git'
+"----------------------------------------------------------------->>> syntastic
+"syantastic是一款强大的语法检查插件，支持很多语言的语法与编码风格检查。实际上这个插件只是个接口，背后的语法检查是交给各个语言自己的检查器
+Plugin 'vim-syntastic/syntastic'
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list=1
+let g:syntastic_auto_loc_list=1
+let g:syntastic_check_on_open=1             "设置为每次打开buffer就执行语法检查，而不只是在保存时
+let g:syntastic_check_on_wq=0
+let g:syntastic_python_checkers=['pylint']  "python语法检查器
+let g:syntastic_python_pylint_args='--disable=C,R,W'    "忽略convention(C),refactor()R,warning(W),只报error(E)与致命错误(F)
 
 "------------------------------------------------------------->>> YouCompleteMe
-"Bundle 'Valloric/YouCompleteMe'
-"Bundle 'Valloric/ListToggle'
-"Bundle 'scrooloose/syntastic'
+"Plugin 'Valloric/YouCompleteMe'
+"Plugin 'Valloric/ListToggle'
+"Plugin 'scrooloose/syntastic'
 "let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py '
 "下面这句话是决定补全时用什么按键
 "let g:ycm_key_list_select_completion = ['<Down>'] 
@@ -382,8 +431,8 @@ let g:vim_markdown_folding_disabled = 1		"禁用了vim-markdown的自动折叠
 "Plugin 'Shougo/vimshell.vim'
 
 "------------------------------------------------------------------>>> NERDTree
-"Bundle 'scrooloose/nerdtree'
-" 设置NerdTree
+"Plugin 'scrooloose/nerdtree'
+"设置NerdTree
 "map <F3> :NERDTreeMirror<CR>
 "map <F3> :NERDTreeToggle<CR>
 "let g:NERDTree_title = "[NERDTree]"
@@ -399,16 +448,16 @@ let g:vim_markdown_folding_disabled = 1		"禁用了vim-markdown的自动折叠
 
 "--------------------------------------------------------------------->>> a.vim
 "头文件和实现文件的快速切换
-"Bundle 'a.vim'
+"Plugin 'a.vim'
 
 "--------------------------------------------------------------------->>> c.vim
 "1. 自动为*.c文件添加文件头说明; 2. 插入一个函数 \if; 3. 插入main函数 \im; 4. 插入函数头 \cfu; 5. 添加一个注释块 \cfr; 6. 包含(include)一个头文件 \p<; 7. 保存文件，编译后立即执行; 8. 插入预先编辑好的程序块 \nr
-Bundle 'c.vim'
+Plugin 'c.vim'
 
 "------------------------------------------------------------------>>> quickfix
 "QuickFIX C++ Fix Engine Library
 "将编译过程中产生的错误信息保存到文件中，然后vim利用这些信息跳转到源文件的对应位置
-Bundle 'quickfix/quickfix'
+Plugin 'quickfix/quickfix'
 "set makeprg=gcc\ hello.c\ -o\ hello   "make命令执行的程序为vim变量makeprg的值，默认makeprg=make，使用Makefile机制进行项目的编译、管理。可以通过set makeprg=xxx的命令修改makeprg的值，从而使make命令执行不同的编译。
 "常用quickfix命令
 ":cc            显示详细错误信息
@@ -423,21 +472,47 @@ Bundle 'quickfix/quickfix'
 
 "------------------------------------------------------------->>> vim-powerline
 "PowerLine是一个增强的Vim状态栏插件。当Vim处于NORMAL、INSERT、BLOCK等状态时，状态栏会呈现不同的颜色，同时状态栏还会显示当前编辑文件的格式（uft-8等）、文件类型（java、xml等）和光标位置等
-"Bundle 'Lokaltog/vim-powerline'
+"Plugin 'Lokaltog/vim-powerline'
+
+"-------------------------------------------------------------------->>> tagbar
+"ctags标签提取显示
+"tagbar比taglist优化之处:
+"1. 支持头文件的函数列表显示
+"2. 对面向对象的支持更好
+"3. 自动根据文件修改时间来重建
+"NOTE:文件不支持中文路径
+Plugin 'majutsushi/tagbar'
+map <C-B> :TagbarToggle<CR>
+let g:tagbar_ctags_bin='ctags'
+"let g:tagbar_width=30
+
+"------------------------------------------------------------->>> Indent Guides
+"Plugin 'https://github.com/nathanaelkane/vim-indent-guides.git'
 
 "--------------------------------------------------------------->>> Indent Line
 "插件安装成功后就会显示缩进对齐线, 我们仅仅在 .vimrc 里加一行来切换是否显示
-Bundle 'Yggdroot/indentLine'
+Plugin 'Yggdroot/indentLine'
 map <C-L> :IndentLinesToggle<CR>
 let g:indentLine_char='|'
 let g:indentLine_enabled=1
 "let g:indentLine_setColors=0
 "let g:indentLine_color_term=239
 
+"--------------------------------------------------------------------->>> ctrlp
+"文件跳转
+"Plugin 'kien/ctrlp.vim'
+"let g:ctrlp_map='<c-p>'
+"let g:ctrlp_cmd='CtrlP'
+"设置过滤不进行查找的后缀名 
+"let g:ctrlp_custom_ignore='\v[\/]\.(git|hg|svn|pyc)$' 
+
+"--------------------------------------------------------------->>> vim-airline
+"Plugin 'vim-airline/vim-airline'
 
 
-
-filetype plugin indent on     " required!   /** vimrc文件配置结束 **/
-"                                           /** vundle命令 **/
+" All of your Plugins must be added before the following line
+call vundle#end()               "required
+filetype plugin indent on       "required!      /** vimrc文件配置结束 **/
+"                                               /** vundle命令 **/
 " see :h vundle for more details or wiki for faq 
 " NOTE: comments after Bundle command are not allowed..
