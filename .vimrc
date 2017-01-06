@@ -280,7 +280,8 @@ map <silent> <C-N> :!ctags -R -f .tags --c-kinds=+cdfmsqtuv --c++-kinds=+cdfmnst
 "map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 "imap <F5> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 set tags=./.tags;,.tags       "不可省略，表示若当前目录中不存在tags，则在父目录中寻找。分号，代表 “向上搜索”，会首先在你当前文件所在的文件夹（不是当前文件夹）里面搜索名为 tags的文件，没有的话，往上一级目录，再没有的话，再往上一级目录，直到搜索到根目录为止
-set tags+=~/.vim/GlobalTags/*.tags
+set tags+=~/.vim/GlobalTags/python3_4_5.tags
+"set tags+=~/.vim/GlobalTags/*.tags
 "set tags+=~/.vim/tags/.tags
 "set tags+=./.tags    "add current directory's generated tags file
 "set tags+=~/arm/linux-2.6.24.7/tags "add new tags file(刚刚生成tags的路径，在ctags -R 生成tags文件后，不要将tags移动到别的目录，否则ctrl+］时，会提示找不到源码文件)
@@ -543,6 +544,12 @@ let g:indentLine_enabled=0
 Plugin 'vim-scripts/ShowTrailingWhitespace'
 map <silent> <C-Z> :call ShowTrailingWhitespace#Toggle(0)<CR>
 let g:ShowTrailingWhitespace=0
+
+"-------------------------------------------------------------->>> bash-support
+"使用菜单和热键来编写和执行BASH脚本
+"Cite: http://www.360doc.com/content/12/0113/22/834950_179262769.shtml
+"Plugin 'vim-scripts/bash-support.vim'
+
 
 
 " All of your Plugins must be added before the following line
