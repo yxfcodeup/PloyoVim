@@ -112,9 +112,9 @@ set background=dark
 "colorscheme solarized
 
 "------------------------------>>> highlight current line
-au WinLeave * set nocursorline nocursorcolumn   "离开某窗口前
-au WinEnter * set cursorline cursorcolumn       "进入别的窗口后。不包括 Vim 启动时的第一个窗口
-set cursorline cursorcolumn                     "Vim启动时,高亮光标所在行所在列
+"au WinLeave * set nocursorline nocursorcolumn   "离开某窗口前
+"au WinEnter * set cursorline cursorcolumn       "进入别的窗口后。不包括 Vim 启动时的第一个窗口
+"set cursorline cursorcolumn                     "Vim启动时,高亮光标所在行所在列
 "highlight CursorLine   cterm=NONE ctermbg=NONE ctermfg=green guibg=NONE guifg=NONE
 "highlight CursorColumn cterm=NONE ctermbg=darkblue ctermfg=green guibg=NONE guifg=NONE
 
@@ -312,7 +312,7 @@ endfunc
 nmap <silent> <C-N> :!ctags -R -f .tags --c-kinds=+cdfmsqtuv --c++-kinds=+cdfmnstuv --java-kinds=+cfimp --php-kinds=+cidfvj --python-kinds=+cfmvi --vim-kinds=+acfmv --fields=+ialS --extra=+q `pwd`<CR><CR> :TlistUpdate<CR>       "生成绝对路径的tags
 "map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 "imap <F5> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
-set tags=./.tags;,.tags       "不可省略，表示若当前目录中不存在tags，则在父目录中寻找。分号，代表 “向上搜索”，会首先在你当前文件所在的文件夹（不是当前文件夹）里面搜索名为 tags的文件，没有的话，往上一级目录，再没有的话，再往上一级目录，直到搜索到根目录为止
+set tags=./.tags;,.tags;$HOME       "不可省略，表示若当前目录中不存在tags，则在父目录中寻找。分号，代表 “向上搜索”，会首先在你当前文件所在的文件夹（不是当前文件夹）里面搜索名为 tags的文件，没有的话，往上一级目录，再没有的话，再往上一级目录，直到搜索到根目录为止。分号的意思是指搜索到后面目录为止
 
 "------------------------------>>> ctags python设置
 "if &filetype == 'python'
