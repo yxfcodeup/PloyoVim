@@ -15,7 +15,7 @@
 
 "filetype的默认属性：detection:ON plugin:OFF indent:OFF
 filetype off                    "required!关闭自动检测文件类型!从这行开始，vimrc配置
-set rtp+=~/.vim/bundle/vundle/  "rpt:runtimepath
+set rtp+=~/.vim/bundle/Vundle.vim/  "rpt:runtimepath
 "call vundle#rc()               "旧版Vundle使用
 call vundle#begin()             "新版Vundle使用。另一种选择, 指定一个vundle安装插件的路径 call vundle#begin('~/some/path/here')
 
