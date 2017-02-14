@@ -8,19 +8,27 @@ set helplang=cn     "设置中文帮助文档，若需要英文则改为helplang
 "F2                         
 "F3                         
 "F4                         
-"F5                         Quickly Run
+"F5                         Quickly Run (nmap)
 "F6                         
 "F7                         
 "F8                         
 "F9                         
 "Ctr+F9                     
 "F10
-"F12                        
-"Ctrl+n                     ctags生成.tags文件
-"Ctrl+m                     打开taglist窗口
-"Ctrl+b                     tagbar
-"Ctrl+l                     IndentLine
-"Ctrl+e                     phpcs error window toggle
+"F12                        粘贴模式开关
+"Ctrl+n                     ctags生成.tags文件 (nmap)
+"Ctrl+m                     打开taglist窗口 (nmap)
+"Ctrl+b                     tagbar (nmap)
+"Ctrl+l                     IndentLine (nmap)
+"Ctrl+e                     phpcs error window toggle (nmap)
+"-------------------------------------方向键映射-------------------------------
+"imap <c-k> <up>
+"imap <c-j> <down>
+"imap <c-h> <left>
+"imap <c-l> <right>
+"imap <bs> <delete>
+set pastetoggle=<f12>
+set backspace=indent,eol,start
 
 "---------------------------------键映射---------------------------------------
 "Command    Normal      Visual      Operator Pending    Inder Only  Command Line
@@ -115,6 +123,12 @@ set autowrite       "有改动时自动写回文件
 
 
 "******************************************************************************
+"------------------------------------移动设置----------------------------------
+"Set 7 lines to the curors - when moving vertical..
+"set so=7           "scrolloff 光标上下两侧最少保留的屏幕行数
+
+
+"******************************************************************************
 "---------------------------------------备份文件-------------------------------
 "默认情况下使用Vim编程，在修改文件后系统会自动生成一个带~的备份文件，如若不需要文件和备份，可以复位
 "set nobackup
@@ -169,11 +183,22 @@ set history=100     "历史记录100条
 
 "------------------------------------状态栏相关的设置--------------------------
 "set statusline=[%F]%y%r%m%*%=[Line:%l/%L,Column:%c][%p%%]   "状态栏的显示格式
-"set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}   "状态行显示的内容
-"set laststatus=2   "总显示最后一个窗口的状态行；设为1则窗口数多于一个的时候显示最后一个窗口的状态行；0不显示最后一个窗口的状态行 
+"set statusline=%F%m%r%h%w%<\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}   "状态行显示的内容
+"set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L] 
+set statusline=%t%m%r%h%w%<\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [LEN=%L]\ [POS=%l,%v][%p%%]\ [ASCII=\%03.3b]
+set laststatus=2   "总显示最后一个窗口的状态行；设为1则窗口数多于一个的时候显示最后一个窗口的状态行；2总是显示状态行；0永远不会有状态行
 set ruler           "标尺，用于显示光标位置的行号和列号，逗号分隔。每个窗口都有自己的标尺。如果窗口有状态行，标尺在那里显示。否则，它显示在屏幕的最后一行上
 
 "------------------------------------折叠设置----------------------------------
+"折叠模式：
+"manual    （不常用）默认折叠方法，关闭vim折叠会丢失。如果想保持折叠信息，可运行:mkview 命令，重启后用 :loadview 命令回复。该命令生成的缓存文件位于~/.vim/view 文件夹中。移动或重命名文件，折叠信息依然会丢失。
+"indent    （常用）缩进折叠方法，相同的缩进中代码会被折叠。
+"syntax    （不常用）语法高亮折叠，在c/c++中会折叠花括号部分，其它格式代码中有的不能自动折叠。
+"marker    （常用）标记折叠方法。关闭vim折叠信息不会丢失，而且易用控制和标注。
+set nofoldenable
+"set foldlevelstart=99      "打开文件是默认不折叠代码
+"set foldmethod=indent
+"set foldcolumn=5           "折叠指示标记
 
 "----------------------------------换行与折行----------------------------------
 "set textwidth=0             "设置自动换行,0为不自动换行
@@ -214,7 +239,7 @@ set wrap                    "设置自动折行
 
 "******************************************************************************
 "-------------------------------------Quickly Run------------------------------
-map <F5> :call CompileRun()<CR>
+"nmap <F5> :call CompileRun()<CR>
 func! CompileRun()
     exec "w"
     if &filetype == 'c'
@@ -276,16 +301,25 @@ autocmd BufReadPost *
 "---------------------------------------ctags----------------------------------
 "按下Ctrl+n重新生成tag文件，并更新taglist
 "map <silent> <C-N> :!ctags -R -f .tags --c-kinds=+cdfmsqtuv --c++-kinds=+cdfmnstuv --java-kinds=+cfimp --php-kinds=+cidfvj --python-kinds=+cfmvi --vim-kinds=+acfmv --fields=+ialS --extra=+q .<CR><CR> :TlistUpdate<CR>       "生成相对路径的tags
-map <silent> <C-N> :!ctags -R -f .tags --c-kinds=+cdfmsqtuv --c++-kinds=+cdfmnstuv --java-kinds=+cfimp --php-kinds=+cidfvj --python-kinds=+cfmvi --vim-kinds=+acfmv --fields=+ialS --extra=+q `pwd`<CR><CR> :TlistUpdate<CR>       "生成绝对路径的tags
+nmap <silent> <C-N> :!ctags -R -f .tags --c-kinds=+cdfmsqtuv --c++-kinds=+cdfmnstuv --java-kinds=+cfimp --php-kinds=+cidfvj --python-kinds=+cfmvi --vim-kinds=+acfmv --fields=+ialS --extra=+q `pwd`<CR><CR> :TlistUpdate<CR>       "生成绝对路径的tags
 "map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 "imap <F5> <ESC>:!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
 set tags=./.tags;,.tags       "不可省略，表示若当前目录中不存在tags，则在父目录中寻找。分号，代表 “向上搜索”，会首先在你当前文件所在的文件夹（不是当前文件夹）里面搜索名为 tags的文件，没有的话，往上一级目录，再没有的话，再往上一级目录，直到搜索到根目录为止
-set tags+=~/.vim/GlobalTags/python3_4_5.tags
+if &filetype == 'python'
+    set tags+=~/.vim/GlobalTags/python3_4_5.tags
+endif
 "set tags+=~/.vim/GlobalTags/*.tags
 "set tags+=~/.vim/tags/.tags
 "set tags+=./.tags    "add current directory's generated tags file
 "set tags+=~/arm/linux-2.6.24.7/tags "add new tags file(刚刚生成tags的路径，在ctags -R 生成tags文件后，不要将tags移动到别的目录，否则ctrl+］时，会提示找不到源码文件)
-
+"--------------------------------关于PHP的支持问题-----------------------------
+"环境变量中设置: alias phptags='ctags -R -f .tags --langmap=php:.engine.inc.module.theme.php --php-kinds=cdf --languages=php --fields=+ialS --extra=+q `pwd`'
+"~/.ctags文件中:
+"--regex-php=/^[ \t]*[(private|public|static)( \t)]*function[ \t]+([A-Za-z0-9_]+)[ \t]*\(/\1/f, function, functions/
+"--regex-php=/^[ \t]*[(private|public|static)]+[ \t]+\$([A-Za-z0-9_]+)[ \t]*/\1/p, property, properties/
+"--regex-php=/^[ \t]*(const)[ \t]+([A-Za-z0-9_]+)[ \t]*/\2/d, const, constants/
+"使用时:
+"phptags
 
 
 "******************************************************************************
@@ -314,26 +348,26 @@ set tags+=~/.vim/GlobalTags/python3_4_5.tags
 "<F1>           显示帮助 
 "可以用“:TlistOpen”打开taglist窗口，用“:TlistClose”关闭taglist窗口。或者使用“:TlistToggle”在打开和关闭间切换
 
-"if MySys() == "windows"                "设定windows系统中ctags程序的位置
-"    let Tlist_Ctags_Cmd = 'ctags'
-"elseif MySys() == "linux"              "设定linux系统中ctags程序的位置
-"    let Tlist_Ctags_Cmd = '/usr/bin/ctags'
-"endif
-let Tlist_Ctags_Cmd='ctags'             "指定Exuberant ctags程序的位置，如果它没在你PATH变量所定义的路径中，需要使用此选项设置一下。因为我们放在环境变量里，所以可以直接执行
-let Tlist_Process_File_Always=1         "实时更新tags!是否一直处理tags.1:处理;0:不处理
-let Tlist_Use_Right_Window=1            "让窗口显示在右边,0的话就是显示在左边,默认为左侧
-let Tlist_GainFocus_On_ToggleOpen=1     "在使用:TlistToggle打开taglist窗口时，如果希望输入焦点在taglist窗口中，设置Tlist_GainFocus_On_ToggleOpen为1
-"let Tlist_Sort_Type='name'             "设置Tlist_Sort_Type为”name”可以使taglist以tag名字进行排序，缺省是按tag在文件中出现的顺序进行排序。按tag出现的范围（即所属的namespace或class）排序，已经加入taglist的TODO List，但尚未支持
-let Tlist_Show_One_File=1               "让taglist可以同时显示多个文件的函数列表,设置0则为显示多个,1为显示单个
-let Tlist_File_Fold_Auto_Close=1        "当同时显示多个文件中的tag时，设置Tlist_File_Fold_Auto_Close为１，可使taglist只显示当前文件tag，其它文件的tag都被折叠起来
-let Tlist_Close_On_Select=1             "在选择了tag后自动关闭taglist窗口,1为关闭
-let Tlist_Exit_OnlyWindow=1             "当taglist是最后一个分割窗口时，自动推出vim
-let Tlist_Inc_Winwidth=0
-let Tlist_Auto_Open=0                   "启动VIM后,自动打开taglist窗口，1为打开,0为不打开
-"let Tlist_WinHeight=100
-"let Tlist_WinWidth=40
-"let Tlist_Use_Horiz_Window=1           "为１则设置taglist窗口横向显示
-nmap <silent> <C-M> :TlistToggle<CR>
+""if MySys() == "windows"                "设定windows系统中ctags程序的位置
+""    let Tlist_Ctags_Cmd = 'ctags'
+""elseif MySys() == "linux"              "设定linux系统中ctags程序的位置
+""    let Tlist_Ctags_Cmd = '/usr/bin/ctags'
+""endif
+"let Tlist_Ctags_Cmd='ctags'             "指定Exuberant ctags程序的位置，如果它没在你PATH变量所定义的路径中，需要使用此选项设置一下。因为我们放在环境变量里，所以可以直接执行
+"let Tlist_Process_File_Always=1         "实时更新tags!是否一直处理tags.1:处理;0:不处理
+"let Tlist_Use_Right_Window=1            "让窗口显示在右边,0的话就是显示在左边,默认为左侧
+"let Tlist_GainFocus_On_ToggleOpen=1     "在使用:TlistToggle打开taglist窗口时，如果希望输入焦点在taglist窗口中，设置Tlist_GainFocus_On_ToggleOpen为1
+""let Tlist_Sort_Type='name'             "设置Tlist_Sort_Type为”name”可以使taglist以tag名字进行排序，缺省是按tag在文件中出现的顺序进行排序。按tag出现的范围（即所属的namespace或class）排序，已经加入taglist的TODO List，但尚未支持
+"let Tlist_Show_One_File=1               "让taglist可以同时显示多个文件的函数列表,设置0则为显示多个,1为显示单个
+"let Tlist_File_Fold_Auto_Close=1        "当同时显示多个文件中的tag时，设置Tlist_File_Fold_Auto_Close为１，可使taglist只显示当前文件tag，其它文件的tag都被折叠起来
+"let Tlist_Close_On_Select=1             "在选择了tag后自动关闭taglist窗口,1为关闭
+"let Tlist_Exit_OnlyWindow=1             "当taglist是最后一个分割窗口时，自动推出vim
+"let Tlist_Inc_Winwidth=0
+"let Tlist_Auto_Open=0                   "启动VIM后,自动打开taglist窗口，1为打开,0为不打开
+""let Tlist_WinHeight=100
+""let Tlist_WinWidth=40
+""let Tlist_Use_Horiz_Window=1           "为１则设置taglist窗口横向显示
+"nmap <silent> <C-M> :TlistToggle<CR>
 
 
 
@@ -391,12 +425,30 @@ Plugin 'VundleVim/Vundle.vim'
 
 "-------------------------------------------------------------------->>> Xdebug
 "Plugin 'xdebug/xdebug'
+"let g:debuggerMaxDepth = 5
 "let g:debuggerPort=9090     "注意：要与/etc/php.d/xdebug.ini中xdebug.remote_port端口配置一致
+
+"-------------------------------------------------------------------->>> Vdebug
+":Bp            toggle breakpoint,断点标记
+":Up            stack up
+":DN            stack down
+"e              eval
+"F1             调整窗口大小
+"F2             调试步到下一标记,step over 
+"F3             调试步进入下一标记,step into
+"F4             调试步出当前标记,step out
+"F5             调试运行
+"F6             退出调试模式
+"F11            获得所有变量内容
+"F12            获得当前光标变量
+Plugin 'joonty/vdebug'
+let g:vdebug_options = {'server': '127.0.0.1'}
+let g:vdebug_options = {'port': '9090'}
 
 "----------------------------------------------------------------->>> syntastic
 "syantastic是一款强大的语法检查插件，支持很多语言的语法与编码风格检查。实际上这个插件只是个接口，背后的语法检查是交给各个语言自己的检查器
 Plugin 'vim-syntastic/syntastic'
-map <C-E> :call ToggleErrors()<CR>
+nmap <C-E> :call ToggleErrors()<CR>
 "map <C-0> :SyntasticToggleMode<CR>         "在激活/禁用间切换
 "map <C-9> :lclose<CR>                      "关闭提示窗口
 set statusline+=%#warningmsg#
@@ -405,7 +457,7 @@ set statusline+=%*
 let g:syntastic_always_populate_loc_list=1  "每次自动调用 :SyntasticSetLocList, 将错误覆盖 **quickfix**
 let g:syntastic_auto_loc_list=1             "自动拉起/关闭错误窗口, 不需要手动调用 :Errors。0不自动. 1自动拉起关闭. 2 自动关闭，但不自动拉起. 3 自动拉起，但不自动关闭 默认2, 改为1
 let g:syntastic_loc_list_height=5           "错误提示窗口高度
-let g:syntastic_check_on_open=1             "设置为每次打开buffer就执行语法检查，而不只是在保存时
+let g:syntastic_check_on_open=0             "设置为每次打开buffer就执行语法检查，而不只是在保存时
 let g:syntastic_check_on_wq=0               "设置保存关闭文件时不执行语法检查
 let g:syntastic_echo_current_error=1        "在命令行显示当前行的错误信息. 默认1
 let g:syntastic_enable_sign=1               "做行号左边显示错误标记. 默认1
@@ -416,7 +468,7 @@ let g:syntastic_warning_symbol='->'
 let g:syntastic_style_warning_symbol='?'
 "配置各语言的checker
 let g:syntastic_python_checkers=['pylint']  "python语法检查器
-let g:syntastic_python_pylint_args='--disable=C,R,W'    "忽略convention(C),refactor()R,warning(W),只报error(E)与致命错误(F)
+let g:syntastic_python_pylint_args='--disable=C,R,W,E'    "忽略convention(C),refactor()R,warning(W),只报error(E)与致命错误(F)
 let g:syntastic_php_checkers=['php']
 let g:syntastic_php_phpcs_args='--standard=zend -n --report=csv'
 func! ToggleErrors()
@@ -511,7 +563,7 @@ Plugin 'quickfix/quickfix'
 "3. 自动根据文件修改时间来重建
 "NOTE:文件不支持中文路径
 Plugin 'majutsushi/tagbar'
-map <C-B> :TagbarToggle<CR>
+nmap <C-B> :TagbarToggle<CR>
 let g:tagbar_ctags_bin='ctags'
 let g:tagbar_autofocus=1        "设置为打开tagbar自动切换
 "let g:tagbar_width=30
@@ -522,7 +574,7 @@ let g:tagbar_autofocus=1        "设置为打开tagbar自动切换
 "--------------------------------------------------------------->>> Indent Line
 "插件安装成功后就会显示缩进对齐线, 我们仅仅在 .vimrc 里加一行来切换是否显示
 Plugin 'Yggdroot/indentLine'
-map <C-L> :IndentLinesToggle<CR>
+nmap <C-L> :IndentLinesToggle<CR>
 let g:indentLine_char='|'
 let g:indentLine_enabled=0
 "let g:indentLine_setColors=0
@@ -542,13 +594,16 @@ let g:indentLine_enabled=0
 "---------------------------------------------------->>> ShowTrailingWhitespace
 "显示行尾空格
 Plugin 'vim-scripts/ShowTrailingWhitespace'
-map <silent> <C-Z> :call ShowTrailingWhitespace#Toggle(0)<CR>
+nmap <silent> <C-Z> :call ShowTrailingWhitespace#Toggle(0)<CR>
 let g:ShowTrailingWhitespace=0
 
 "-------------------------------------------------------------->>> bash-support
 "使用菜单和热键来编写和执行BASH脚本
 "Cite: http://www.360doc.com/content/12/0113/22/834950_179262769.shtml
 "Plugin 'vim-scripts/bash-support.vim'
+
+"-------------------------------------------------------->>> vim-plugin-viewdoc
+"Plugin 'powerman/vim-plugin-viewdoc'
 
 
 
