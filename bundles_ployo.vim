@@ -122,6 +122,7 @@ Plugin 'c.vim'
 "Plugin 'python.vim'
 "Plugin 'python_match.vim'
 "Plugin 'pythoncomplete'             "Python Omni Completion
+"Plugin 'davidhalter/jedi-vim'       "awesome Python autocompletion with VIM
 
 "------------------------------>>> PHP
 "Plugin '2072/PHP-Indenting-for-VIm'
