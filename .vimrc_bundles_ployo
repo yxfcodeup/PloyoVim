@@ -126,6 +126,17 @@ autocmd BufReadPost *
 	\ exe "normal g'\"" |
 	\ endif
 
+"------------------------------>>> 设置win32环境下gvim打开文件后最大化
+if has('win32')
+    au GUIEnter * simalt ~x
+else
+    au GUIEnter * call MaximizeWindow()
+endif 
+
+function! MaximizeWindow()
+    silent !wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz
+endfunction
+
 "------------------------------>>> 搜索
 "set incsearch       "逐步搜索模式，对当前键入的字符进行搜索而不必等待键入完成。输入搜索命令时，显示目前输入的模式的匹配位置。匹配的字符串被高亮
 set hlsearch        "高亮搜索结果，所有结果都高亮显示，而不是只显示一个匹配
